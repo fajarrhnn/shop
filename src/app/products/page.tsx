@@ -1,11 +1,11 @@
 import { ProductsTypes } from "@/lib/definition";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
 import { formatter } from "@/lib/utils";
 import Link from "next/link";
 
 async function getData() {
-    const res = await fetch("http://localhost:3000/api/products", {
+    const res = await fetch("/api/products", {
         method: "GET",
     });
     if (!res.ok) {
