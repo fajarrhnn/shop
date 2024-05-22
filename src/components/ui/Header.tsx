@@ -6,8 +6,10 @@ import { Button } from './button'
 import { Avatar, AvatarFallback, AvatarImage } from './avatar'
 import { useState, useEffect } from 'react'
 import { UsersTypes } from '@/lib/definition'
-import { getToken, useLogout } from '@/lib/services'
+import { getToken } from '@/lib/services'
 import { decodeToken } from '@/lib/utils'
+import { useLogout } from '@/lib/useLogout'
+
 
 export default function Header() {
 
