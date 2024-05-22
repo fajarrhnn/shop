@@ -5,22 +5,24 @@ import { formatter } from "@/lib/utils";
 import Link from "next/link";
 
 async function getData() {
-    const res = await fetch(`${process.env.URL}/api/products`, {
+    const url = process.env.URL || "http://localhost:3000"
+    const res = await fetch(`${url}/api/products`, {
         method: "GET",
     });
     if (!res.ok) {
+        console.error('Failed to fetch data:', res.statusText);
         throw new Error("Failed to fetch data");
     }
     return res.json();
 }
 
 export default async function ProductsPage() {
-    const data = await getData();
-    const products: ProductsTypes[] = data.result.rows
-    console.log(products)
+    try {
+        const data = await getData();
+        const products: ProductsTypes[] = data.result.rows;
+        console.log(products);
 
-    return (
-        <>
+        return (
             <section className="flex flex-col md:grid md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {products?.map((item: ProductsTypes) => (
                     <Card className="rounded-none shadow-none border-none" key={item.id}>
@@ -44,6 +46,9 @@ export default async function ProductsPage() {
                     </Card>
                 ))}
             </section>
-        </>
-    );
+        );
+    } catch (error) {
+        console.error('Error rendering ProductsPage:', error);
+        return <p>Failed to load products.</p>;
+    }
 }
