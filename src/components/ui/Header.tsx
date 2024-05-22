@@ -6,7 +6,7 @@ import { Button } from './button'
 import { Avatar, AvatarFallback, AvatarImage } from './avatar'
 import { useState, useEffect } from 'react'
 import { UsersTypes } from '@/lib/definition'
-import { getToken, logout } from '@/lib/services'
+import { getToken, useLogout } from '@/lib/services'
 import { decodeToken } from '@/lib/utils'
 
 export default function Header() {
@@ -62,7 +62,7 @@ export default function Header() {
                                     <AvatarFallback>{getInitials(user.firstName, user.lastName)}</AvatarFallback>
                                 </Avatar>
                             </Link>
-                            <Button onClick={logout}>Logout</Button>
+                            <Button onClick={useLogout}>Logout</Button>
                         </>
                     ) : (
                         <Link href={'/login'} passHref>
