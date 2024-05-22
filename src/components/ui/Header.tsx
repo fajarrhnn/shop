@@ -1,25 +1,41 @@
-
 'use client'
-
 import Link from 'next/link'
-// import UserAccountNav from '../auth/UserAccountNav'
 import MobileMenu from '../navbar/MobileMenu'
-// import LoginButton from './LoginButton'
 import DesktopMenu from '../navbar/DesktopMenu'
 import { Button } from './button'
 import { Avatar, AvatarFallback, AvatarImage } from './avatar'
-// import TanstackQueryProvier from '../TanstackQueryProvier'
-// import UserAccountNav from '../auth/UserAccountNav'
+import { useState, useEffect } from 'react'
+import { UsersTypes } from '@/lib/definition'
+import { getToken, logout } from '@/lib/services'
+import { decodeToken } from '@/lib/utils'
 
 export default function Header() {
 
-    let session = JSON.parse(localStorage.getItem('fn') || 'null');
+    const [user, setUser] = useState<UsersTypes | null>(null);
 
-    const getInitials = (name: string): string => {
-        const nameArray = name.split(' ');
-        return nameArray.map(word => word.charAt(0)).join('').toUpperCase();
+    async function fetchAndDecodeToken() {
+        try {
+            const token = await getToken();
+            const decoded: any = decodeToken(token)
+            if (decoded) {
+                setUser({
+                    id: decoded.id,
+                    firstName: decoded.firstName,
+                    lastName: decoded.lastName,
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching or decoding token:', error);
+        }
     }
 
+    useEffect(() => {
+        fetchAndDecodeToken();
+    }, []);
+
+    const getInitials = (firstName: string, lastName: string): string => {
+        return `${firstName.charAt(0).toUpperCase()}${lastName.charAt(0).toUpperCase()}`;
+    };
 
     return (
         <header className='w-full mx-auto sticky top-0 z-50 bg-white shadow-md'>
@@ -34,20 +50,25 @@ export default function Header() {
                 <div className='hidden md:block'>
                     <DesktopMenu />
                 </div>
-
                 <div className='flex items-center gap-4'>
-
-
-                    {!session ?
+                    {user ? (
+                        <>
+                            <Link href={'/profile'}>
+                                <Avatar>
+                                    <AvatarImage
+                                        src={`https://ui-avatars.com/api/?name=${getInitials(user.firstName, user.lastName)}`}
+                                        alt="usn"
+                                    />
+                                    <AvatarFallback>{getInitials(user.firstName, user.lastName)}</AvatarFallback>
+                                </Avatar>
+                            </Link>
+                            <Button onClick={logout}>Logout</Button>
+                        </>
+                    ) : (
                         <Link href={'/login'} passHref>
                             <Button>Login</Button>
                         </Link>
-                        :
-                        <Avatar>
-                            <AvatarImage src={`https://ui-avatars.com/api/?name=${getInitials(session)}`} alt="usn" />
-                            <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
-                    }
+                    )}
                 </div>
             </nav>
 
