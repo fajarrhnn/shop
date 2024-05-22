@@ -3,6 +3,9 @@ import { sql } from "@vercel/postgres";
 import { v4 as uuidv4 } from "uuid"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
+import { serialize } from "cookie";
+import { MAX_AGE, COOKIE_NAME } from "@/lib/utils";
+
 
 export async function GET(req: Request) {
     try {
@@ -29,12 +32,25 @@ export async function POST(req: NextRequest) {
         } else {
             const uuid = uuidv4()
             const hashedPassword = await bcrypt.hash(password, 10)
-            const token = jwt.sign({ id: uuid, firstName: firstName, lastName: lastName }, null, { expiresIn: '1d', algorithm: "none" })
-            const result = await sql`INSERT INTO Users (id, firstName, lastName, email, password) VALUES (${uuid}, ${firstName}, ${lastName}, ${email}, ${hashedPassword})`
-            const response = NextResponse.json({ message: "Create Account Successfully!", result }, { status: 201 });
-            response.headers.set('Set-Cookie', `token=${token}; Path=/; HttpOnly; Max-Age=86400`);
 
-            return response;
+
+
+            const secret = process.env.JWT_SECRET || ""
+            const token = jwt.sign({ id: uuid, firstName: firstName, lastName: lastName }, secret, { expiresIn: MAX_AGE })
+            const result = await sql`INSERT INTO Users (id, firstName, lastName, email, password) VALUES (${uuid}, ${firstName}, ${lastName}, ${email}, ${hashedPassword})`
+
+            const serialized = serialize(COOKIE_NAME, token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                maxAge: MAX_AGE,
+                path: '/',
+            })
+
+            return NextResponse.json(
+                { message: "Create Account Successfully!", result: result, token: token },
+                { status: 201, headers: { 'Set-Cookie': serialized } }
+            );
         }
 
     } catch (error) {

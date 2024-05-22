@@ -9,7 +9,7 @@ import { useState } from "react"
 
 export default function Login() {
 
-    const [resMessage,setResMessage]=useState('')
+    const [resMessage, setResMessage] = useState('')
 
     const [loginData, setLoginData] = useState({
         email: '',
@@ -36,6 +36,7 @@ export default function Login() {
 
             } else if (res.ok) {
                 const data = await res.json();
+                // localStorage.setItem('token', data.token)
                 window.location.href = "/";
             } else {
                 console.error("Gagal Login Akun")

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken"
-import { v4 as uuidv4 } from "uuid"
 import { sql } from "@vercel/postgres";
 import bcrypt from "bcryptjs"
+import { serialize } from "cookie";
+
+const MAX_AGE = 60 * 60 * 24 * 10
 
 export async function POST(req: NextRequest) {
 
@@ -10,7 +12,7 @@ export async function POST(req: NextRequest) {
 
     try {
         const exitingUser = await sql`SELECT * FROM Users WHERE email = ${email}`
-        if (exitingUser.rowCount === 0 || !exitingUser.rows) {
+        if (exitingUser.rowCount === 0) {
             return NextResponse.json({ message: "Email not registered, please sign up!" }, { status: 404 })
         }
         const userData = exitingUser.rows[0];
@@ -20,12 +22,21 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "Invalid email or password" }, { status: 401 });
         }
 
-        const token = jwt.sign({ id: userData.id, firstname: userData.firstName, lastname: userData.lastName }, null, { expiresIn: '1d', algorithm: "none" });
+        const secret = process.env.JWT_SECRET || ""
+        const token = jwt.sign({ id: userData.id, firstName: userData.firstname, lastName: userData.lastname }, secret, { expiresIn: MAX_AGE })
 
-        const response = NextResponse.json({ message: "Login successful", token: token }, { status: 200 });
-        response.headers.set('Set-Cookie', `token=${token}; Path=/; HttpOnly; Max-Age=86400`);
+        const serialized = serialize("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: MAX_AGE,
+            path: '/',
+        })
 
-        return response;
+        return NextResponse.json(
+            { message: "Login Account Successfully!", token: token },
+            { status: 200, headers: { 'Set-Cookie': serialized } }
+        );
 
     } catch (error) {
         return NextResponse.json({ error }, { status: 500 });
