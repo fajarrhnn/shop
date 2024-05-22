@@ -9,7 +9,7 @@ export async function getToken() {
     return token;
 }
 
-export const logout = async () => {
+export const Logout = async () => {
     const [user, setUser] = useState(null)
     const router = useRouter()
     try {
