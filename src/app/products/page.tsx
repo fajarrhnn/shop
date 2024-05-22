@@ -5,7 +5,7 @@ import { formatter } from "@/lib/utils";
 import Link from "next/link";
 
 async function getData() {
-    const res = await fetch("/api/product", {
+    const res = await fetch("/api/products", {
         method: "GET",
     });
     if (!res.ok) {
