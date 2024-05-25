@@ -10,7 +10,7 @@ async function getData() {
     method: "GET",
   });
   if (!res.ok) {
-    throw new Error("Failed to fetch data");
+    console.error("Failed to fetch data");
   }
   return res.json();
 }
