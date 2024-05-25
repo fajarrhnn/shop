@@ -116,7 +116,7 @@ export default function Cart() {
           </div>
         </>
       ) : (
-        <p className="text-red-500 text-3xl text-center">{errorMessage}</p>
+        <p className="text-red-500 text-xl text-center">{errorMessage}</p>
       )}
     </>
   );
