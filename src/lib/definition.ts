@@ -20,3 +20,13 @@ interface Users {
 }
 
 export type { Users as UsersTypes }
+
+interface Carts {
+    id: string,
+    title: string,
+    image: string,
+    price: number,
+    quantity: number
+}
+
+export type { Carts as CartsTypes }
