@@ -14,3 +14,7 @@ export const MAX_AGE = 60 * 60 * 24 * 10
 export function decodeToken(token: string) {
   return jwt.decode(token);
 }
+
+export const getInitials = (firstName: string, lastName: string): string => {
+  return `${firstName.charAt(0).toUpperCase()}${lastName.charAt(0).toUpperCase()}`;
+};
