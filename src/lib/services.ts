@@ -1,6 +1,10 @@
 export async function getToken() {
-    const res = await fetch('/api/protect');
+    const url = process.env.URL || "http://localhost:3000";
+    const res = await fetch(`${url}/api/protect`, {
+      method: "GET",
+    });
     const data = await res.json();
-    const token = data.token.value;
+    const token = await data.token;
     return token;
-}
+  }
+  
