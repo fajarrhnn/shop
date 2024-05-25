@@ -1,14 +1,15 @@
 export const navMenu = [
     {
-        title: 'Home',
-        href: '/',
+      title: "Home",
+      href: "/",
     },
     {
-        title: 'Products',
-        href: '/products',
+      title: "Products",
+      href: "/products",
     },
     {
-        title: 'Cart',
-        href: '/cart',
+      title: "Cart",
+      href: "/cart",
     },
-]
+  ];
+  
