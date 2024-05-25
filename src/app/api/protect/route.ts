@@ -1,25 +1,28 @@
-"use server"
+"use server";
 
-import { NextRequest, NextResponse } from "next/server"
-import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
+import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { COOKIE_NAME } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
+  const token = cookies().get(COOKIE_NAME)?.value;
+  const url = req.nextUrl.clone();
+  url.pathname = "/login";
 
-    const cookieStore = cookies()
-    const token = cookieStore.get('token')
+  if (!token) {
+    return NextResponse.json(
+      { message: "Unauthorized! Please Login or Signup" },
+      { status: 403 },
+    );
+  }
 
-    if (!token) {
-        return NextResponse.json({ message: "Lu gapunya token dek! Makanya login!" }, { status: 403 })
-    }
-
-    return NextResponse.json({ token })
+  return NextResponse.json(
+    { message: "You are logged in", token },
+    { status: 200 },
+  );
 }
 
 export async function POST() {
-    const cookieStore = cookies()
-    cookieStore.delete('token')
-
-    // Send a response indicating the cookie has been deleted
-    return NextResponse.json({ success: true }, { status: 200 })
+  cookies().delete(COOKIE_NAME);
+  return NextResponse.json({ success: true }, { status: 200 });
 }
