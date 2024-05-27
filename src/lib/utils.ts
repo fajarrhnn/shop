@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx"
 import jwt from "jsonwebtoken"
 import { twMerge } from "tailwind-merge"
+import { CartsTypes } from "./definition"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -18,3 +19,11 @@ export function decodeToken(token: string) {
 export const getInitials = (firstName: string, lastName: string): string => {
   return `${firstName.charAt(0).toUpperCase()}${lastName.charAt(0).toUpperCase()}`;
 };
+
+export const subtotalPrice = (products: CartsTypes[]) => {
+  let total = 0;
+  products.forEach(product => {
+    total += product.price * product.quantity;
+  });
+  return total;
+}
