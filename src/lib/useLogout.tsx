@@ -8,7 +8,8 @@ export function useLogout() {
 
   const logout = useCallback(async () => {
     try {
-      const res = await fetch("/api/protect", {
+      const url = process.env.URL || "http://localhost:3000";
+      const res = await fetch(`${url}/api/protect`, {
         method: "POST",
       });
       const data = await res.json();
