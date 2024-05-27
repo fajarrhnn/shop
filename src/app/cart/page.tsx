@@ -1,17 +1,41 @@
 "use client";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { TrashIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { getToken } from "@/lib/services";
 import { useEffect, useState } from "react";
 import { CartsTypes } from "@/lib/definition";
-import { formatter } from "@/lib/utils";
+import { formatter, subtotalPrice } from "@/lib/utils";
+import { useToast } from "@/components/ui/use-toast";
+
+async function deleteCart(id: string) {
+  const token = await getToken();
+  const url = process.env.URL || "http://localhost:3000";
+  try {
+    const res = await fetch(`${url}/api/cart/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) {
+      console.error("Failed to remove data from cart", await res.json())
+    } else {
+      window.location.reload()
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 export default function Cart() {
+  const { toast } = useToast()
   const [cart, setCart] = useState([]);
   const [errorMessage, seterrorMessage] = useState("");
+  const subTotal = subtotalPrice(cart)
 
   useEffect(() => {
     async function getCart() {
@@ -73,18 +97,24 @@ export default function Cart() {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <Button className="mr-2" size="icon" variant="outline">
+                      {/* <Button className="mr-2" size="icon" variant="outline" onClick={decrease}>
                         <MinusIcon className="h-4 w-4" />
-                      </Button>
-                      <span className="text-lg font-semibold">{quantity}</span>
-                      <Button className="ml-2" size="icon" variant="outline">
+                      </Button> */}
+                      <span className="text-lg font-semibold">Quantity: {quantity}</span>
+                      {/* <Button className="ml-2" size="icon" variant="outline" onClick={increase}>
                         <PlusIcon className="h-4 w-4" />
-                      </Button>
+                      </Button> */}
                     </div>
                     <Button
                       className="text-red-500"
                       size="icon"
                       variant="outline"
+                      onClick={() => {
+                        deleteCart(id),
+                          toast({
+                            title: "Successfully remove item from cart"
+                          })
+                      }}
                     >
                       <TrashIcon className="h-4 w-4" />
                     </Button>
@@ -102,7 +132,7 @@ export default function Cart() {
                 </p>
               </div>
               <div className="text-right col-span-1">
-                <span className="text-2xl font-bold">$149.98</span>
+                <span className="text-2xl font-bold">{formatter.format(subTotal)}</span>
               </div>
             </div>
           </div>
