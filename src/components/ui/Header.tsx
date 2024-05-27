@@ -16,12 +16,12 @@ export default function Header() {
   async function fetchAndDecodeToken() {
     try {
       const token = await getToken();
-      const decoded:any = jwt.decode(token);
+      const decoded: any = jwt.decode(token);
       if (decoded) {
         setUser({
-          id: decoded.id,
-          firstName: decoded.firstName,
-          lastName: decoded.lastName,
+          id: decoded?.id,
+          firstName: decoded?.firstName,
+          lastName: decoded?.lastName,
         });
       }
     } catch (error) {
@@ -52,11 +52,11 @@ export default function Header() {
                 <Link href={"/profile"}>
                   <Avatar>
                     <AvatarImage
-                      src={`https://ui-avatars.com/api/?name=${getInitials(user.firstName, user.lastName)}`}
+                      src={`https://ui-avatars.com/api/?name=${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}
                       alt="usn"
                     />
                     <AvatarFallback>
-                      {getInitials(user.firstName, user.lastName)}
+                      {user.firstName.charAt(0) + user.lastName.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                 </Link>
