@@ -18,7 +18,8 @@ export default function Login() {
   const handleLogin: FormEventHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/login", {
+      const url = process.env.URL || "http://localhost:3000";
+      const res = await fetch(`${url}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
