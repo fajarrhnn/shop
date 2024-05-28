@@ -1,4 +1,5 @@
 "use server";
+
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { sql } from "@vercel/postgres";
@@ -14,7 +15,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const decoded:any = jwt.decode(BearerToken);
+    const decoded: any = jwt.decode(BearerToken);
     const user_id = decoded.id;
 
     const result =
@@ -44,18 +45,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const decoded:any = jwt.decode(BearerToken);
+    const decoded: any = jwt.decode(BearerToken);
     const user_id = decoded.id;
-    const id = uuidv4();
     const { product_id, quantity } = await req.json();
 
-    const result =
-      await sql`INSERT INTO Carts (id, user_id, product_id, quantity) VALUES (${id},${user_id}, ${product_id}, ${quantity})`;
+    const queryCheck = await sql`SELECT * FROM Carts WHERE product_id = ${product_id} AND user_id = ${user_id}`;
+
+    if (queryCheck.rowCount > 0) {
+      const addQty = await sql`UPDATE Carts SET quantity = quantity + ${quantity} WHERE product_id = ${product_id} AND user_id = ${user_id};`;
+      return NextResponse.json(
+        { message: "Product has been found, so adding quantity", addQty },
+        { status: 200 }
+      );
+    }
+
+    const id = uuidv4();
+    const addCart = await sql`INSERT INTO Carts (id, user_id, product_id, quantity) VALUES (${id},${user_id}, ${product_id}, ${quantity})`;
     return NextResponse.json(
-      { message: "Add Cart Successfully!", result },
+      { message: "Add Cart Successfully!", addCart },
       { status: 201 },
     );
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }
