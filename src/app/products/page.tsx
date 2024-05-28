@@ -16,38 +16,43 @@ async function getData() {
 }
 
 export default async function ProductsPage() {
-  const data = await getData();
-  const products: ProductsTypes[] = data.result.rows;
+  try {
+    const data = await getData();
+    const products: ProductsTypes[] = data.result.rows;
 
-  return (
-    <>
-      {products.length > 0 ?
-        <section className="flex flex-col md:grid md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {
-            products?.map(({ title, image, id, price, slug }) => (
-              <Card className="rounded-none shadow-none border-none" key={id}>
-                <CardHeader className="h-56 flex justify-center items-center">
-                  <Image
-                    src={image}
-                    alt={title}
-                    width={120}
-                    height={120}
-                    className="w-auto h-auto object-contain mx-auto"
-                  />
-                </CardHeader>
-                <CardContent>
-                  <Link href={`/products/${slug}`}>
-                    <h1 className="text-sm line-clamp-2">{title}</h1>
-                  </Link>
-                  <p className="text-base font-bold">{formatter.format(price)}</p>
-                </CardContent>
-              </Card>
-            ))
-          }
-        </section>
-        :
-        <p>Sorry, products not found</p>
-      }
-    </>
-  )
+    return (
+      <>
+        {products.length > 0 ?
+          <section className="flex flex-col md:grid md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {
+              products?.map(({ title, image, id, price, slug }) => (
+                <Card className="rounded-none shadow-none border-none" key={id}>
+                  <CardHeader className="h-56 flex justify-center items-center">
+                    <Image
+                      src={image}
+                      alt={title}
+                      width={120}
+                      height={120}
+                      className="w-auto h-auto object-contain mx-auto"
+                    />
+                  </CardHeader>
+                  <CardContent>
+                    <Link href={`/products/${slug}`}>
+                      <h1 className="text-sm line-clamp-2">{title}</h1>
+                    </Link>
+                    <p className="text-base font-bold">{formatter.format(price)}</p>
+                  </CardContent>
+                </Card>
+              ))
+            }
+          </section>
+          :
+          <p>Sorry, products not found</p>
+        }
+      </>
+    )
+  } catch (error) {
+    <p> Failed to fetch products</p>
+    console.error(error)
+  }
 }
