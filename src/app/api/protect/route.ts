@@ -5,14 +5,14 @@ import { cookies } from "next/headers";
 import { COOKIE_NAME } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
-  const token = cookies().get(COOKIE_NAME)?.value;
+  const token = await cookies().get(COOKIE_NAME)?.value;
   const url = req.nextUrl.clone();
   url.pathname = "/login";
 
   if (!token) {
     return NextResponse.json(
       { message: "Unauthorized! Please Login or Signup" },
-      { status: 403 },
+      { status: 401 },
     );
   }
 
