@@ -26,7 +26,6 @@ async function getData() {
   } catch (error) {
     console.error("Error Pak", error)
   }
-
 }
 
 export default async function ProductsPage() {
@@ -58,6 +57,7 @@ export default async function ProductsPage() {
           ))
         }
       </section>
+      {!products && <p className="text-center text-lg text-red-500 my-19">Products not found</p>}
     </>
   )
 }
