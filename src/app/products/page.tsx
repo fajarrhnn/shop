@@ -1,3 +1,17 @@
+// when im deploy my code to vercel, i get the error message in log like this
+
+// SyntaxError: Unexpected token 'T', "The deploy"... is not valid JSON
+//     at JSON.parse(<anonymous>)
+//   at parseJSONFromBytes (node:internal/deps/undici/undici:5584:19)
+//   at successSteps (node:internal/deps/undici/undici:5555:27)
+//   at fullyReadBody (node:internal/deps/undici/undici:1665:9)
+//   at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+//   at async specConsumeBody (node:internal/deps/undici/undici:5564:7)
+//   at async l (/vercel/path0/.next/server/app/products/page.js:1:7956)
+
+// i think this error because a products page, so this is my code // app/products/page.tsx
+
+
 import { ProductsTypes } from "@/lib/definition";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
@@ -9,10 +23,18 @@ async function getData() {
   const res = await fetch(`${url}/api/products`, {
     method: "GET",
   });
+
+  const text = await res.text();
+
   if (!res.ok) {
-    console.error("Failed to fetch data");
+    throw new Error(`Failed to fetch data: ${text}`);
   }
-  return res.json();
+
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    throw new Error(`Failed to parse JSON: ${text}`);
+  }
 }
 
 export default async function ProductsPage() {
