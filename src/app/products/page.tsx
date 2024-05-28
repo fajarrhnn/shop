@@ -6,8 +6,10 @@ import { formatter } from "@/lib/utils";
 
 async function getData() {
   try {
-    const url = process.env.VERCEL_URL || "http://localhost:3000";
-    const res = await fetch(`${url}/api/products`);
+    const baseUrl = process.env.VERCEL_URL || "http://localhost:3000";
+    const url = new URL('/api/products', baseUrl);
+
+    const res = await fetch(url.toString());
 
     if (!res.ok) {
       console.error(`Failed to fetch data (status code: ${res.status})`);
@@ -59,3 +61,4 @@ export default async function ProductsPage() {
     </>
   )
 }
+
