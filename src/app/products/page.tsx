@@ -1,39 +1,23 @@
-// when im deploy my code to vercel, i get the error message in log like this
-
-// SyntaxError: Unexpected token 'T', "The deploy"... is not valid JSON
-//     at JSON.parse(<anonymous>)
-//   at parseJSONFromBytes (node:internal/deps/undici/undici:5584:19)
-//   at successSteps (node:internal/deps/undici/undici:5555:27)
-//   at fullyReadBody (node:internal/deps/undici/undici:1665:9)
-//   at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-//   at async specConsumeBody (node:internal/deps/undici/undici:5564:7)
-//   at async l (/vercel/path0/.next/server/app/products/page.js:1:7956)
-
-// i think this error because a products page, so this is my code // app/products/page.tsx
-
-
+import Link from "next/link";
+import Image from "next/image";
 import { ProductsTypes } from "@/lib/definition";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import Image from "next/image";
 import { formatter } from "@/lib/utils";
-import Link from "next/link";
 
 async function getData() {
-  const url = process.env.URL || "http://localhost:3000";
-  const res = await fetch(`${url}/api/products`, {
-    method: "GET",
-  });
-
-  const text = await res.text();
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch data: ${text}`);
-  }
-
   try {
-    return JSON.parse(text);
+    const url = process.env.URL || "http://localhost:3000";
+    const res = await fetch(`${url}/api/products`, {
+      method: "GET",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch data: ${data}`);
+    }
   } catch (error) {
-    throw new Error(`Failed to parse JSON: ${text}`);
+    console.error(error)
   }
 }
 
