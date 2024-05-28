@@ -18,7 +18,7 @@ export default function Login() {
   const handleLogin: FormEventHandler = async (e) => {
     e.preventDefault();
     try {
-      const url = process.env.URL || "http://localhost:3000";
+      const url = process.env.NEXT_PUBLIC_VERCEL_URL  || "http://localhost:3000";
       const res = await fetch(`${url}/api/login`, {
         method: "POST",
         headers: {
