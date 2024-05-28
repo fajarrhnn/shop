@@ -12,7 +12,7 @@ export async function GET() {
       );
     } else {
       return NextResponse.json(
-        { message: "Successfully get all data Products", result },
+        { message: "Successfully get all products", result },
         { status: 200 },
       );
     }
