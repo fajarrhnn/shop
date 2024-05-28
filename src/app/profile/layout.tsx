@@ -10,7 +10,7 @@ export default function ProfileLayout({ children }: Readonly<{ children: React.R
 
     return (
         <>
-            <main className="w-11/12 mx-auto py-4">
+            <main className="w-full mx-auto">
                 {children}
             </main>
         </>
