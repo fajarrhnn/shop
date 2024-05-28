@@ -11,14 +11,15 @@ async function getData() {
       method: "GET",
     });
 
-    const data = res.json();
+    const data = await res.json();
+    console.log(data)
 
     if (!res.ok) {
       throw new Error(`Failed to fetch data: ${data}`);
     }
-    
+
     return data;
-    
+
   } catch (error) {
     console.error(error)
   }
@@ -27,7 +28,7 @@ async function getData() {
 export default async function ProductsPage() {
   try {
     const data = await getData();
-    const products: ProductsTypes[] = data.result.rows;
+    const products: ProductsTypes[] = await data.result.rows;
 
     return (
       <>
