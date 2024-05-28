@@ -11,23 +11,29 @@ async function getData() {
       method: "GET",
     });
 
-    const data = await res.json();
-    console.log(data)
-
     if (!res.ok) {
-      throw new Error(`Failed to fetch data: ${data}`);
+      throw new Error(`Failed to fetch data: ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    console.log("API response:", data);
+
+    if (!data.result || !data.result.rows) {
+      throw new Error("Invalid data structure");
     }
 
     return data;
 
   } catch (error) {
-    console.error(error)
+    console.error("Error fetching data:", error);
+    return { result: { rows: [] } };
   }
 }
 
+
 export default async function ProductsPage() {
   const data = await getData();
-  const products: ProductsTypes[] = await data.result.rows;
+  const products: ProductsTypes[] = data?.result?.rows || [];
   console.log("all products", products)
 
   return (
