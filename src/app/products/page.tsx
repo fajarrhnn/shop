@@ -1,16 +1,3 @@
-// i get error message like this when i develop a next.js project
-
-// SyntaxError: Unexpected token T in JSON at position 0
-//     at JSON.parse(<anonymous>)
-//   at parseJSONFromBytes (node:internal/deps/undici/undici:6662:19)
-//   at successSteps (node:internal/deps/undici/undici:6636:27)
-//   at node:internal/deps/undici/undici:1236:60
-//   at node:internal/process/task_queues:140:7
-//   at AsyncResource.runInAsyncScope (node:async_hooks:203:9)
-//   at AsyncResource.runMicrotask (node:internal/process/task_queues:137:8)
-//   at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-
-// this is my code, an app/products/page.tsx
 import Link from "next/link";
 import Image from "next/image";
 import { ProductsTypes } from "@/lib/definition";
@@ -37,6 +24,7 @@ async function getData() {
   } catch (error) {
     console.error("Error Pak", error)
   }
+
 }
 
 export default async function ProductsPage() {
