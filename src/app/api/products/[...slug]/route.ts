@@ -11,15 +11,15 @@ export async function GET(req: NextRequest) {
     .join("/");
 
   try {
-    const result = await sql`SELECT * FROM Products WHERE slug = ${slug}`;
-    if (result.rowCount === 0) {
+    const results = await sql`SELECT * FROM Products WHERE slug = ${slug}`;
+    if (!results) {
       return NextResponse.json(
         { message: `Product ${slug} are not found` },
         { status: 404 },
       );
     }
     return NextResponse.json(
-      { message: `Successfully get data Products ${slug}`, result },
+      { message: `Successfully get data Products ${slug}`, result: results },
       { status: 200 },
     );
   } catch (error) {
