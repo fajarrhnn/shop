@@ -11,11 +11,14 @@ async function getData() {
       method: "GET",
     });
 
-    const data = await res.json();
+    const data = res.json();
 
     if (!res.ok) {
       throw new Error(`Failed to fetch data: ${data}`);
     }
+    
+    return data;
+    
   } catch (error) {
     console.error(error)
   }
