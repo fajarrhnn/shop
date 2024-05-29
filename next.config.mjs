@@ -1,3 +1,5 @@
+import { middleware } from "./middleware"
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -17,7 +19,7 @@ const nextConfig = {
         headers: [
           {
             key: "Access-Control-Allow-Origin",
-            value: "https://jarot-shop.vercel.app/",
+            value: "*",
           },
           {
             key: "Access-Control-Allow-Methods",
@@ -38,3 +40,4 @@ const nextConfig = {
 };
 
 export default nextConfig;
+export { middleware }
