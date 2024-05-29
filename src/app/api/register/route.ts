@@ -30,7 +30,8 @@ export async function POST(req: NextRequest) {
         await sql`INSERT INTO Users (id, firstName, lastName, email, password) VALUES (${uuid}, ${firstName}, ${lastName}, ${email}, ${hashedPassword})`;
 
       const serialized = serialize(COOKIE_NAME, token, {
-        httpOnly: false,
+        httpOnly: true,
+        sameSite: "strict",
         secure: process.env.NODE_ENV === "production",
         maxAge: MAX_AGE,
         path: "/",
