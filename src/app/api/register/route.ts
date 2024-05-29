@@ -36,21 +36,33 @@ export async function POST(req: NextRequest) {
         maxAge: MAX_AGE,
         path: "/",
       });
-
+      
       const response = NextResponse.json(
         { message: "Login Account Successfully!", token: token },
-        { status: 200 },
-      );
-
-      response.headers.set('Set-Cookie', serialized);
-      response.headers.set('Access-Control-Allow-Origin', "https://jarot-shop.vercel.app/");
-      response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      response.headers.set('Access-Control-Allow-Credentials', 'true');
+        {
+          status: 200, headers: {
+            'Set-Cookie': serialized,
+            'Access-Control-Allow-Origin': "https://jarot-shop.vercel.app",
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Access-Control-Allow-Credentials': 'true'
+          }
+        }
+      )
 
       return response;
     }
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }
+}
+
+export function OPTIONS(req: NextRequest) {
+  const headers = {
+    'Access-Control-Allow-Origin': "https://jarot-shop.vercel.app",
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+  return new Response(null, { status: 204, headers });
 }

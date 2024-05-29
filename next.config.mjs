@@ -17,7 +17,7 @@ const nextConfig = {
         headers: [
           {
             key: "Access-Control-Allow-Origin",
-            value: ["https://jarot-shop.vercel.app/", "https://0b2twnj3-3000.asse.devtunnels.ms/"]
+            value: ["https://jarot-shop.vercel.app", "https://0b2twnj3-3000.asse.devtunnels.ms"]
           },
           {
             key: "Access-Control-Allow-Methods",
