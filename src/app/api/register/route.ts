@@ -37,14 +37,18 @@ export async function POST(req: NextRequest) {
         path: "/",
       });
 
-      return NextResponse.json(
-        {
-          message: "Create Account Successfully!",
-          result: result,
-          token: token,
-        },
-        { status: 201, headers: { "Set-Cookie": serialized } },
+      const response = NextResponse.json(
+        { message: "Login Account Successfully!", token: token },
+        { status: 200 },
       );
+
+      response.headers.set('Set-Cookie', serialized);
+      response.headers.set('Access-Control-Allow-Origin', "https://jarot-shop.vercel.app/");
+      response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      response.headers.set('Access-Control-Allow-Credentials', 'true');
+
+      return response;
     }
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
