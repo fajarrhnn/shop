@@ -12,7 +12,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 async function deleteCart(id: string) {
   const token = await getToken();
-  const url = process.env.VERCEL_URL  || "http://localhost:3000";
+  const url = process.env.NEXT_PUBLIC_VERCEL_URL  || "http://localhost:3000";
   try {
     const res = await fetch(`${url}/api/cart/${id}`, {
       method: "DELETE",
@@ -40,7 +40,7 @@ export default function Cart() {
   useEffect(() => {
     async function getCart() {
       const token = await getToken();
-      const url = process.env.VERCEL_URL  || "http://localhost:3000";
+      const url = process.env.NEXT_PUBLIC_VERCEL_URL  || "http://localhost:3000";
       try {
         const res = await fetch(`${url}/api/cart`, {
           method: "GET",
