@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import { serialize } from "cookie";
 import { COOKIE_NAME, MAX_AGE } from "@/lib/utils";
 
-export async function POST(req:NextRequest) {
+export async function POST(req: NextRequest) {
   const { email, password } = await req.json();
 
   try {
@@ -39,7 +39,7 @@ export async function POST(req:NextRequest) {
 
     const serialized = serialize(COOKIE_NAME, token, {
       httpOnly: true,
-      sameSite:"strict",
+      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
       secure: process.env.NODE_ENV === "production",
       maxAge: MAX_AGE,
       path: "/",
