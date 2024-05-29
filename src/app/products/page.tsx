@@ -7,7 +7,9 @@ import { formatter } from "@/lib/utils";
 async function getData() {
   try {
     const baseUrl = process.env.VERCEL_URL || "http://localhost:3000";
-    const url = new URL('/api/products', baseUrl);
+    console.log('VERCEL_URL:', process.env.VERCEL_URL);  // Log the environment variable
+    const url = new URL(baseUrl);
+    url.pathname = '/api/products';
 
     const res = await fetch(url.toString());
 
@@ -17,6 +19,7 @@ async function getData() {
       console.error(`Response body error: ${text}`);
       return [];
     }
+
 
     const text = await res.text();
     const data = JSON.parse(text);
@@ -57,7 +60,7 @@ export default async function ProductsPage() {
           ))
         }
       </section>
-      {!products && <p className="text-center text-lg text-red-500 my-19">Products not found</p>}
+      {!products || products.length === 0 && <p className="text-center text-lg text-red-500 my-10">Products not found</p>}
     </>
   )
 }
