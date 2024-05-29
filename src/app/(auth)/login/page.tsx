@@ -18,12 +18,13 @@ export default function Login() {
   const handleLogin: FormEventHandler = async (e) => {
     e.preventDefault();
     try {
-      const url = process.env.VERCEL_URL  || "http://localhost:3000";
+      const url = process.env.VERCEL_URL || "http://localhost:3000";
       const res = await fetch(`${url}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: 'include',
         body: JSON.stringify(loginData),
       });
 
@@ -37,10 +38,10 @@ export default function Login() {
         const data = await res.json();
         window.location.href = "/";
       } else {
-       new Error('Gagal Login Akun')
+        new Error('Gagal Login Akun')
       }
     } catch (error) {
-        console.error(error)
+      console.error(error)
     }
   };
 
