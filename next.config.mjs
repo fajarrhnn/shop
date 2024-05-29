@@ -1,5 +1,3 @@
-import { middleware } from "./middleware"
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -40,4 +38,3 @@ const nextConfig = {
 };
 
 export default nextConfig;
-export { middleware }
