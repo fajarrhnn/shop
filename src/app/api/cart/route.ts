@@ -45,9 +45,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const decoded: any = jwt.decode(BearerToken);
+    const token = BearerToken.split(' ')[1];
+    const secret = process.env.JWT_SECRET || ""
+    const decoded: any = jwt.verify(token, secret);
     const user_id = decoded.id;
+
     const { product_id, quantity } = await req.json();
+    if (!product_id || !quantity || typeof product_id !== 'string' || typeof quantity !== 'number' || quantity <= 0) {
+      return NextResponse.json(
+        { message: "Invalid product_id or quantity" },
+        { status: 400 },
+      );
+    }
 
     const queryCheck = await sql`SELECT * FROM Carts WHERE product_id = ${product_id} AND user_id = ${user_id}`;
 
@@ -66,6 +75,13 @@ export async function POST(req: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    return NextResponse.json({ error: error }, { status: 500 });
+    if (error) {
+      return NextResponse.json(
+        { message: "Invalid Token" },
+        { status: 403 }
+      );
+    }
+    return NextResponse.json({ error: "Something went wrong :(" }, { status: 500 });
   }
 }
+

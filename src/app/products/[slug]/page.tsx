@@ -15,7 +15,7 @@ import DetailProductSkeleton from "./loader";
 
 async function fetchData(slug: string) {
   try {
-    const url = process.env.NEXT_PUBLIC_VERCEL_URL  || "http://localhost:3000";
+    const url = process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000";
     const res = await fetch(`${url}/api/products/${slug}`, {
       method: "GET",
     });
@@ -37,19 +37,26 @@ export default function DetailProduct({ params }: { params: { slug: string } }) 
   const { count, increase, decrease } = useCounter()
   const { back } = useRouter();
   const [isLoading, setIsLoading] = useState(false)
+  const [message, setMesaage] = useState('')
 
   async function postData(id: string, qty: number) {
     const token = await getToken();
     try {
-      const url = process.env.NEXT_PUBLIC_VERCEL_URL  || "http://localhost:3000";
+      const url = process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000";
       const res = await fetch(`${url}/api/cart`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${token}`,
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({ product_id: id, quantity: qty }),
       });
+
+      if (!res.ok) {
+        setMesaage('Failed add product to cart')
+      } else {
+        setMesaage('Successfully add to cart')
+      }
     } catch (error) {
       console.error(error);
     }
@@ -129,7 +136,7 @@ export default function DetailProduct({ params }: { params: { slug: string } }) 
                 <Button onClick={() => {
                   postData(id, count),
                     toast({
-                      title: "Successfully add to cart",
+                      title: `${message}`
                     })
                 }}
                   variant="secondary">
