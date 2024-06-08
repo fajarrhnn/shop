@@ -11,7 +11,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ message: "Unauthorized!!" }, { status: 401 });
     }
 
-    const result = await sql`DELETE FROM Carts WHERE id= ${id}`;
+    const result = await sql`DELETE FROM Carts WHERE product_id = ${id}`;
     if (!result.rows || result.rowCount === 0) {
       return NextResponse.json(
         { message: "No data in the cart." },
