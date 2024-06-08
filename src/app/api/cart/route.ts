@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     const user_id = decoded.id;
 
     const result =
-      await sql`SELECT Carts.id, Products.title, Products.image, Products,price, Carts.quantity FROM 
+      await sql`SELECT Carts.id, Products.id, Products.title, Products.image, Products,price, Carts.quantity FROM 
         Carts INNER JOIN Products ON Carts.product_id = Products.id WHERE Carts.user_id = ${user_id}`;
     if (!result.rows || result.rowCount === 0) {
       return NextResponse.json(
