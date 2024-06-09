@@ -4,35 +4,10 @@ import MobileMenu from "../navbar/MobileMenu";
 import DesktopMenu from "../navbar/DesktopMenu";
 import { Button } from "./button";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-import { useState, useEffect } from "react";
-import { UsersTypes } from "@/lib/definition";
-import { getToken } from "@/lib/services";
-import { getInitials } from "@/lib/utils";
-import jwt from "jsonwebtoken";
+import { useGetFullName } from "@/services/profile";
 
 export default function Header() {
-  const [user, setUser] = useState<UsersTypes>();
-
-  async function fetchAndDecodeToken() {
-    try {
-      const token = await getToken();
-      const decoded: any = jwt.decode(token);
-      if (decoded) {
-        setUser({
-          id: decoded?.id,
-          firstName: decoded?.firstName,
-          lastName: decoded?.lastName,
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    fetchAndDecodeToken();
-  }, []);
-
+  const user = useGetFullName()
   return (
     <>
       <header className="w-full mx-auto sticky top-0 z-50 bg-white shadow-md">
@@ -52,11 +27,11 @@ export default function Header() {
                 <Link href={"/profile"}>
                   <Avatar>
                     <AvatarImage
-                      src={`https://ui-avatars.com/api/?name=${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}
+                      src={`https://ui-avatars.com/api/?name=${user?.firstName.charAt(0)}${user?.lastName.charAt(0)}`}
                       alt="usn"
                     />
                     <AvatarFallback>
-                      {user.firstName.charAt(0) + user.lastName.charAt(0)}
+                      {user?.firstName.charAt(0) + user?.lastName.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                 </Link>
