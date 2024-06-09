@@ -9,17 +9,14 @@ interface Products {
     rating: number,
     stock: number
 }
-export type { Products as ProductsTypes }
 
 interface Users {
     id: string,
     firstName: string,
     lastName: string,
     email?: string,
-    password?: string
+    password?: string,
 }
-
-export type { Users as UsersTypes }
 
 interface Carts {
     id: string,
@@ -29,4 +26,19 @@ interface Carts {
     quantity: number
 }
 
+interface Address {
+    id?: string,
+    user_id?: string,
+    state: string,
+    city: string,
+    district: string,
+    subDistrict: string,
+    neighborhood: string,
+    street: string,
+    zipCode: string,
+}
+
+export type { Products as ProductsTypes }
+export type { Users as UsersTypes }
 export type { Carts as CartsTypes }
+export type { Address as AddressTypes }
