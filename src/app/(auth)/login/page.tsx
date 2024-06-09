@@ -1,49 +1,23 @@
-"use client";
+"use client"
 
 import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FormEventHandler } from "react";
 import { useState } from "react";
+import { LoginDataType, useLogin } from "@/services/auth";
 
 export default function Login() {
-  const [resMessage, setResMessage] = useState("");
-
-  const [loginData, setLoginData] = useState({
+  const { login, loading, message } = useLogin();
+  const [data, setData] = useState<LoginDataType>({
     email: "",
-    password: "",
+    password: ""
   });
 
-  const handleLogin: FormEventHandler = async (e) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const url = process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000";
-      const res = await fetch(`${url}/api/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: 'include',
-        body: JSON.stringify(loginData),
-      });
-
-      if (res.status === 404) {
-        const data = await res.json();
-        setResMessage(data.message);
-      } else if (res.status === 401) {
-        const data = await res.json();
-        setResMessage(data.message);
-      } else if (res.ok) {
-        const data = await res.json();
-        window.location.href = "/";
-      } else {
-        new Error('Gagal Login Akun')
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  };
+    await login(data);
+  }
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-4 py-4 dark:bg-gray-950">
@@ -64,7 +38,7 @@ export default function Login() {
             </Link>
           </div>
         </div>
-        <p className="text-sm text-center text-red-500">{resMessage}</p>
+        {message && <p className="text-red-500 text-center">{message}</p>}
         <form className="space-y-6" onSubmit={handleLogin}>
           <div>
             <Label
@@ -79,9 +53,9 @@ export default function Login() {
                 id="email"
                 placeholder="Email"
                 required
-                value={loginData.email}
+                value={data.email}
                 onChange={(e) => {
-                  setLoginData((prev) => ({ ...prev, email: e.target.value }));
+                  setData((prev) => ({ ...prev, email: e.target.value }))
                 }}
               />
             </div>
@@ -99,23 +73,20 @@ export default function Login() {
                 id="password"
                 placeholder="Password"
                 required
-                value={loginData.password}
+                value={data.password}
                 onChange={(e) => {
-                  setLoginData((prev) => ({
-                    ...prev,
-                    password: e.target.value,
-                  }));
+                  setData((prev) => ({ ...prev, password: e.target.value }))
                 }}
               />
             </div>
           </div>
           <div>
-            <Button type="submit" className="w-full h-full">
-              Sign in
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Logging in...' : 'Login'}
             </Button>
           </div>
         </form>
       </div>
-    </div>
+    </div >
   );
 }

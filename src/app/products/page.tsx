@@ -3,37 +3,11 @@ import Image from "next/image";
 import { ProductsTypes } from "@/lib/definition";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { formatter } from "@/lib/utils";
-
-async function getData() {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000";
-    console.log('NEXT_PUBLIC_VERCEL_URL:', process.env.NEXT_PUBLIC_VERCEL_URL);  // Log the environment variable
-    const url = new URL(baseUrl);
-    url.pathname = '/api/products';
-
-    const res = await fetch(url.toString());
-
-    if (!res.ok) {
-      console.error(`Failed to fetch data (status code: ${res.status})`);
-      const text = await res.text();
-      console.error(`Response body error: ${text}`);
-      return [];
-    }
-
-    const text = await res.text();
-    const data = JSON.parse(text);
-
-    return data;
-
-  } catch (error) {
-    console.error("Error Pak", error)
-  }
-}
+import { getDataProducts } from "@/services/products";
 
 export default async function ProductsPage() {
-  const data = await getData();
+  const data = await getDataProducts();
   const products: ProductsTypes[] = data?.result?.rows || []
-  console.log("all products", products)
 
   return (
     <>

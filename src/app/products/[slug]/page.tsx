@@ -5,29 +5,14 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
-import { getToken } from "@/lib/services";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { formatter } from "@/lib/utils";
 import { ProductsTypes } from "@/lib/definition";
 import { useCounter } from "@/lib/useCounter";
 import DetailProductSkeleton from "./loader";
-
-async function fetchData(slug: string) {
-  try {
-    const url = process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000";
-    const res = await fetch(`${url}/api/products/${slug}`, {
-      method: "GET",
-    });
-
-    if (!res.ok) {
-      console.error(`Error: ${res.statusText}`);
-    }
-    return res.json();
-  } catch (error) {
-    console.error(error);
-  }
-}
+import { getDataProductsBySlug } from "@/services/products";
+import { addCart } from "@/services/cart";
 
 
 export default function DetailProduct({ params }: { params: { slug: string } }) {
@@ -36,36 +21,11 @@ export default function DetailProduct({ params }: { params: { slug: string } }) 
   const [products, setProducts] = useState<ProductsTypes[]>([]);
   const { count, increase, decrease } = useCounter()
   const { back } = useRouter();
-  const [isLoading, setIsLoading] = useState(false)
-  const [message, setMesaage] = useState('')
-
-  async function postData(id: string, qty: number) {
-    const token = await getToken();
-    try {
-      const url = process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000";
-      const res = await fetch(`${url}/api/cart`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({ product_id: id, quantity: qty }),
-      });
-
-      if (!res.ok) {
-        setMesaage('Failed add product to cart')
-      } else {
-        setMesaage('Successfully add to cart')
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   useEffect(() => {
     async function getProductData() {
       try {
-        const res = await fetchData(slug);
+        const res = await getDataProductsBySlug(slug);
         const product: ProductsTypes[] = res.result.rows;
         setProducts(product);
       } catch (error) {
@@ -75,10 +35,6 @@ export default function DetailProduct({ params }: { params: { slug: string } }) 
 
     getProductData();
   }, [slug]);
-
-  if (isLoading) {
-    return <DetailProductSkeleton />
-  }
 
   return (
     <>
@@ -134,9 +90,9 @@ export default function DetailProduct({ params }: { params: { slug: string } }) 
                   </Button>
                 </div>
                 <Button onClick={() => {
-                  postData(id, count),
+                  addCart(id, count),
                     toast({
-                      title: `${message}`
+                      title: "Successfully added to cart"
                     })
                 }}
                   variant="secondary">

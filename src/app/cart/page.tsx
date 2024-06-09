@@ -4,67 +4,15 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { TrashIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { getToken } from "@/lib/services";
 import { useEffect, useState } from "react";
 import { CartsTypes } from "@/lib/definition";
 import { formatter, subtotalPrice } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
-
-async function deleteCart(id: string) {
-  const token = await getToken();
-  const url = process.env.NEXT_PUBLIC_VERCEL_URL  || "http://localhost:3000";
-  try {
-    const res = await fetch(`${url}/api/cart/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-    if (!res.ok) {
-      console.error("Failed to remove data from cart", await res.json())
-    } else {
-      window.location.reload()
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
+import { deleteCart, useGetCart } from "@/services/cart";
 
 export default function Cart() {
   const { toast } = useToast()
-  const [cart, setCart] = useState([]);
-  const [errorMessage, seterrorMessage] = useState("");
-  const subTotal = subtotalPrice(cart)
-
-  useEffect(() => {
-    async function getCart() {
-      const token = await getToken();
-      const url = process.env.NEXT_PUBLIC_VERCEL_URL  || "http://localhost:3000";
-      try {
-        const res = await fetch(`${url}/api/cart`, {
-          method: "GET",
-          headers: {
-            Authorization: `${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        if (res.status === 404) {
-          const response = await res.json();
-          seterrorMessage(response.message);
-        } else if (res.status === 200) {
-          const response = await res.json();
-          const data = response.result.rows;
-          setCart(data);
-        } else {
-          seterrorMessage("Error Mas");
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    getCart();
-  }, []);
+  const { cart, errorMessage }: any = useGetCart()
 
   return (
     <>
@@ -132,7 +80,7 @@ export default function Cart() {
                 </p>
               </div>
               <div className="text-right col-span-1">
-                <span className="text-2xl font-bold">{formatter.format(subTotal)}</span>
+                {/* <span className="text-2xl font-bold">{formatter.format(subTotal)}</span> */}
               </div>
             </div>
           </div>
@@ -141,7 +89,11 @@ export default function Cart() {
               <Button size="lg" variant="outline">
                 <Link href={"/products"}>Continue Shopping</Link>
               </Button>
-              <Button size="lg">Proceed to Checkout</Button>
+              <Button onClick={() => {
+                toast({
+                  title: "This feature is coming soon in the future",
+                })
+              }}>Procced to Checkout</Button>
             </div>
           </div>
         </>

@@ -1,45 +1,26 @@
-"use client";
+"use client"
 import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState, FormEventHandler } from "react";
+import { useState } from "react";
+import { SignUpDataType, useSignUp } from "@/services/auth";
 
 export default function Signup() {
-  const [resMessage, setResMessage] = useState("");
+  const { signup, loading, error } = useSignUp()
 
-  const [signupData, setSignUpData] = useState({
+  const [data, setData] = useState<SignUpDataType>({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
   });
-  const handleSignUp: FormEventHandler = async (e) => {
-    e.preventDefault();
-    try {
-      const url = process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000";
-      const res = await fetch(`${url}/api/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(signupData),
-      });
 
-      if (res.status === 403) {
-        const data = await res.json();
-        setResMessage(data.message);
-      } else if (res.ok) {
-        const data = await res.json();
-        window.location.href = "/";
-      } else {
-        new Error("Gagal Registrasi Akun");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await signup(data);
+  }
+
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-4 py-4 dark:bg-gray-950">
@@ -60,7 +41,7 @@ export default function Signup() {
             </Link>
           </div>
         </div>
-        <p className="text-sm text-center text-red-500">{resMessage}</p>
+        {error && <p className="text-red-500 text-center">{error}</p>}
         <form className="space-y-6" onSubmit={handleSignUp}>
           <div className="grid grid-cols-2 gap-6">
             <div>
@@ -78,9 +59,9 @@ export default function Signup() {
                   name="firstName"
                   required
                   type="text"
-                  value={signupData.firstName}
+                  value={data.firstName}
                   onChange={(e) => {
-                    setSignUpData((prev) => ({
+                    setData((prev) => ({
                       ...prev,
                       firstName: e.target.value,
                     }));
@@ -103,9 +84,9 @@ export default function Signup() {
                   name="lastName"
                   required
                   type="text"
-                  value={signupData.lastName}
+                  value={data.lastName}
                   onChange={(e) => {
-                    setSignUpData((prev) => ({
+                    setData((prev) => ({
                       ...prev,
                       lastName: e.target.value,
                     }));
@@ -129,9 +110,9 @@ export default function Signup() {
                 name="email"
                 required
                 type="email"
-                value={signupData.email}
+                value={data.email}
                 onChange={(e) => {
-                  setSignUpData((prev) => ({ ...prev, email: e.target.value }));
+                  setData((prev) => ({ ...prev, email: e.target.value }));
                 }}
               />
             </div>
@@ -151,9 +132,9 @@ export default function Signup() {
                 name="password"
                 required
                 type="password"
-                value={signupData.password}
+                value={data.password}
                 onChange={(e) => {
-                  setSignUpData((prev) => ({
+                  setData((prev) => ({
                     ...prev,
                     password: e.target.value,
                   }));
@@ -162,8 +143,8 @@ export default function Signup() {
             </div>
           </div>
           <div>
-            <Button type="submit" className="w-full h-full">
-              Sign up
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Logging in...' : 'Login'}
             </Button>
           </div>
         </form>

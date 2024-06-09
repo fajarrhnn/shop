@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { AddressTypes } from "@/lib/definition";
-import { postAdress } from "@/services/address";
+import { usePostAddress } from "@/services/address";
 
-const initialAddress: AddressTypes = {
+const initialAddress = {
     state: '',
     city: '',
     district: '',
@@ -16,9 +16,14 @@ const initialAddress: AddressTypes = {
     zipCode: '',
 };
 
-
 export default function FormAddress() {
     const [location, setLocation] = useState<AddressTypes>(initialAddress);
+    const postAdress = usePostAddress()
+
+    const handleAddAddress = async (e: FormEvent) => {
+        e.preventDefault();
+        await postAdress(location);
+    }
 
     return (
         <>
@@ -27,20 +32,9 @@ export default function FormAddress() {
                     <CardTitle>Address</CardTitle>
                     <CardDescription>Enter your address details.</CardDescription>
                 </CardHeader>
-                <form onSubmit={postAdress}>
+                <form onSubmit={handleAddAddress}>
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="grid gap-2">
-                                <Label htmlFor="city">City</Label>
-                                <Input
-                                    id="city"
-                                    placeholder="San Francisco"
-                                    name="city"
-                                    required
-                                    value={location.city}
-                                    onChange={(e) => setLocation((prev): any => ({ ...prev, city: e.target.value }))}
-                                />
-                            </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="state">State</Label>
                                 <Input
@@ -50,6 +44,17 @@ export default function FormAddress() {
                                     required
                                     value={location.state}
                                     onChange={(e) => setLocation((prev): any => ({ ...prev, state: e.target.value }))}
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="city">City</Label>
+                                <Input
+                                    id="city"
+                                    placeholder="San Francisco"
+                                    name="city"
+                                    required
+                                    value={location.city}
+                                    onChange={(e) => setLocation((prev): any => ({ ...prev, city: e.target.value }))}
                                 />
                             </div>
                         </div>
