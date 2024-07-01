@@ -14,8 +14,8 @@ export async function getDataProducts() {
             return [];
         }
 
-        const text = await res.text();
-        const data = JSON.parse(text);
+        const data = await res.json();
+        // const data = JSON.parse(text);
 
         return data;
 
